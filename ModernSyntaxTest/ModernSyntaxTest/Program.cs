@@ -7,7 +7,7 @@ var valueRes = ReturnFirstDuplicate(detectors);
 Console.WriteLine(valueRes);
 MutationTest(detectors[0]);
 var siteRes = FilterSites(detectors, null);
-Console.WriteLine(siteRes);
+Console.WriteLine(siteRes.ToString());
 var siteResFiltered = FilterSites(detectors, "Site A");
 Console.WriteLine(string.Join(", ", siteResFiltered.Select(d => d.SiteName)));
 foreach (var detector in detectors)
@@ -62,8 +62,8 @@ static string ReturnFirstDuplicate(List<Detector> detectors)
 
 static List<Detector> CreateRecords()
 {
-    return new List<Detector>
-        {
+    return
+        [
             new (
                 SerialNumber: "123456789",
                 SiteName: "Site A",
@@ -89,5 +89,5 @@ static List<Detector> CreateRecords()
                 SiteName: "Site E",
                 LastCalibrated: DateTime.UtcNow - TimeSpan.FromDays(50)
             )
-        };
+        ];
 }
