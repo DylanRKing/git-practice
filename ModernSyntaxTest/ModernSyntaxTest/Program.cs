@@ -1,40 +1,52 @@
-﻿using System;
-
-internal class Program
-{
-    public record Detector(string SerialNumber,
+﻿public record Detector(string SerialNumber,
                            string SiteName,
                            DateTime LastCalibrated)
     {
         public bool IsOverdue => DateTime.UtcNow - LastCalibrated > TimeSpan.FromDays(180);
     }
 
+internal class Program
+{
+    
+
     private static void Main(string[] args)
     {
         Console.WriteLine("Testing modern syntax and changes in C#");
         var detectors = CreateRecords();
         var valueRes = ValueEqualityTest(detectors);
+        Console.WriteLine(valueRes);
         MutationTest(detectors[0]);
         var siteRes = FilterSites(detectors, null);
+        Console.WriteLine(siteRes);
         var siteResFiltered = FilterSites(detectors, "Site A");
-        var overdueStatus = OverdueStatusCheck(detectors[1]);
+        Console.WriteLine(siteResFiltered);
+        foreach (var detector in detectors)
+        {
+            var overdueStatus = OverdueStatusCheck(detectors[1]);
+            Console.WriteLine(overdueStatus);
+        }
     }
 
-    private static string OverdueStatusCheck(Detector detector) => (DateTime.UtcNow - detector.LastCalibrated).Days switch
+    private static string OverdueStatusCheck(Detector detector)
     {
-        < 180 => "Detector is within calibration period.",
-        < 210 => "Detector is overdue for calibration.",
-        < 240 => "Detector is no longer within safe calibration limits.",
-        < 270 => "Detector is unsafe for use. Automatic shudown is in effect.",
-        _ => "Unkown status. Please check the detector manually."
-    };
+        if (!detector.IsOverdue) return "Detector is within calibration period.";
+        var daysSinceCalibration = (DateTime.UtcNow - detector.LastCalibrated).Days;
+        return daysSinceCalibration switch
+        {
+            < 0 => "Invalid calibration date.",
+            < 210 => "Detector is overdue for calibration.",
+            < 240 => "Detector is no longer within safe calibration limits.",
+            < 270 => "Detector is unsafe for use. Automatic shutdown is in effect.",
+            _ => "Unknown status. Please check the detector manually."
+        };
+    }
 
-    private static string FilterSites(List<Detector> detectors, string? siteFilter)
+    private static List<Detector> FilterSites(List<Detector> detectors, string? siteFilter)
     {
         var filteredSites = siteFilter is null
             ? detectors
             : detectors.Where(d => d.SiteName == siteFilter).ToList();
-        return string.Join(", ", filteredSites.Select(d => d.ToString()));
+        return filteredSites;
     }
 
     private static void MutationTest(Detector detector)
@@ -66,27 +78,27 @@ internal class Program
             new Detector(
                 SerialNumber: "123456789",
                 SiteName: "Site A",
-                LastCalibrated: DateTime.Now - TimeSpan.FromDays(20)
+                LastCalibrated: DateTime.UtcNow - TimeSpan.FromDays(20)
             ),
             new Detector(
                 SerialNumber: "987654321",
                 SiteName: "Site B",
-                LastCalibrated: DateTime.Now - TimeSpan.FromDays(200)
+                LastCalibrated: DateTime.UtcNow - TimeSpan.FromDays(200)
             ),
             new Detector(
                 SerialNumber: "123456789",
                 SiteName: "Site A",
-                LastCalibrated: DateTime.Now - TimeSpan.FromDays(20)
+                LastCalibrated: DateTime.UtcNow - TimeSpan.FromDays(20)
             ),
             new Detector(
                 SerialNumber: "789123456",
                 SiteName: "Site D",
-                LastCalibrated: DateTime.Now - TimeSpan.FromDays(300)
+                LastCalibrated: DateTime.UtcNow - TimeSpan.FromDays(300)
             ),
             new Detector(
                 SerialNumber: "321654987",
                 SiteName: "Site E",
-                LastCalibrated: DateTime.Now - TimeSpan.FromDays(50)
+                LastCalibrated: DateTime.UtcNow - TimeSpan.FromDays(50)
             )
         };
     }
