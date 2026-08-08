@@ -3,16 +3,16 @@
 
 Console.WriteLine("Testing modern syntax and changes in C#");
 var detectors = CreateRecords();
-var valueRes = ValueEqualityTest(detectors);
+var valueRes = ReturnFirstDuplicate(detectors);
 Console.WriteLine(valueRes);
 MutationTest(detectors[0]);
 var siteRes = FilterSites(detectors, null);
 Console.WriteLine(siteRes);
 var siteResFiltered = FilterSites(detectors, "Site A");
-Console.WriteLine(siteResFiltered);
+Console.WriteLine(string.Join(", ", siteResFiltered.Select(d => d.SiteName)));
 foreach (var detector in detectors)
 {
-    var overdueStatus = OverdueStatusCheck(detectors[1]);
+    var overdueStatus = OverdueStatusCheck(detector);
     Console.WriteLine(overdueStatus);
 }
 
@@ -45,7 +45,7 @@ static void MutationTest(Detector detector)
     Console.WriteLine($"Modified Detector: {altDet}");
 }
 
-static string ValueEqualityTest(List<Detector> detectors)
+static string ReturnFirstDuplicate(List<Detector> detectors)
 {
     for (int i = 0; i < detectors.Count; i++)
     {
@@ -64,27 +64,27 @@ static List<Detector> CreateRecords()
 {
     return new List<Detector>
         {
-            new Detector(
+            new (
                 SerialNumber: "123456789",
                 SiteName: "Site A",
                 LastCalibrated: DateTime.UtcNow - TimeSpan.FromDays(20)
             ),
-            new Detector(
+            new (
                 SerialNumber: "987654321",
                 SiteName: "Site B",
                 LastCalibrated: DateTime.UtcNow - TimeSpan.FromDays(200)
             ),
-            new Detector(
+            new (
                 SerialNumber: "123456789",
                 SiteName: "Site A",
                 LastCalibrated: DateTime.UtcNow - TimeSpan.FromDays(20)
             ),
-            new Detector(
+            new (
                 SerialNumber: "789123456",
                 SiteName: "Site D",
                 LastCalibrated: DateTime.UtcNow - TimeSpan.FromDays(300)
             ),
-            new Detector(
+            new (
                 SerialNumber: "321654987",
                 SiteName: "Site E",
                 LastCalibrated: DateTime.UtcNow - TimeSpan.FromDays(50)
